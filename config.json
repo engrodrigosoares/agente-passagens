@@ -1,0 +1,10 @@
+{
+  "origem": "GRU",
+  "destino": "SCL",
+  "data_ida": "2026-10-09",
+  "data_volta": "2026-10-13",
+  "notificacoes": {
+    "email_destino": "engrodrigosoares@gmail.com",
+    "whatsapp_destino": "55110983999284"
+  }
+}
