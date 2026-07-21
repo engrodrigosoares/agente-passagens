@@ -57,18 +57,20 @@ try:
         link_compra = results.get("search_metadata", {}).get("google_flights_url", "https://www.google.com/travel/flights")
         data_atual = datetime.now().strftime("%d/%m/%Y %H:%M")
 
-        # Salvar histórico
+        # Salvar histórico no banco SQLite
         cursor.execute('''
             INSERT INTO historico (data_consulta, origem, destino, preco, link)
             VALUES (?, ?, ?, ?, ?)
         ''', (data_atual, config["origem"], config["destino"], menor_preco, link_compra))
         conn.commit()
 
+        # Exportar histórico em JSON para o site (GitHub Pages)
+        df = pd.read_sql_query("SELECT data_consulta, preco, link FROM historico", conn)
+        df.to_json('dados.json', orient='records', indent=2)
+
         print(f"[{data_atual}] Menor preço encontrado: R$ {menor_preco}")
 
-        # 4. Gerar Gráfico Comparativo
-        df = pd.read_sql_query("SELECT data_consulta, preco FROM historico", conn)
-        
+        # 4. Gerar Gráfico Comparativo em Imagem
         plt.figure(figsize=(10, 5))
         plt.plot(df['data_consulta'], df['preco'], marker='o', color='#1a73e8', linewidth=2)
         plt.title(f'Evolução de Preço: {config["origem"]} ➔ {config["destino"]} ({config["data_ida"]} a {config["data_volta"]})')
