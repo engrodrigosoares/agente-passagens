@@ -36,3 +36,5 @@ jobs:
         with:
           commit_message: "bot: atualiza historico e dados web [skip ci]"
           file_pattern: "historico_precos.db dados.json grafico_precos.png"
+          skip_dirty_check: false
+          skip_fetch: false
