@@ -1,11 +1,17 @@
+Aqui está o código completo e atualizado do arquivo **`.github/workflows/monitor.yml`**, com o agendamento para 8 vezes ao dia (a cada 3 horas), as permissões corretas e as versões mais recentes das Actions.
+
+Basta copiar tudo e colar substituindo o conteúdo atual no GitHub:
+
+```yaml
 name: Agente Autônomo de Passagens 24/7
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    # Executa a cada 3 horas (8 vezes ao dia)
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 
-# Permissão necessária para o bot conseguir salvar o banco de dados historico_precos.db no repositório
+# Permissão para o bot atualizar e salvar o banco de dados historico_precos.db no repositório
 permissions:
   contents: write
 
@@ -37,3 +43,5 @@ jobs:
         with:
           commit_message: "bot: atualiza historico_precos.db [skip ci]"
           file_pattern: "historico_precos.db"
+
+```
