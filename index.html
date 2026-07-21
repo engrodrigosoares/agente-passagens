@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Passagens - GRU ➔ SCL</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { color: #1a73e8; margin-bottom: 5px; }
+        p { color: #666; margin-top: 0; }
+        .cards { display: flex; gap: 20px; margin: 20px 0; }
+        .card { flex: 1; background: #e8f0fe; padding: 15px; border-radius: 8px; text-align: center; }
+        .card h3 { margin: 0; color: #555; font-size: 14px; }
+        .card p { margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: #1a73e8; }
+        .btn { display: inline-block; background-color: #34a853; color: white; padding: 12px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-top: 15px; }
+        .btn:hover { background-color: #2d9247; }
+        canvas { max-width: 100%; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✈️ Monitor de Passagens Aéreas</h1>
+        <p>São Paulo (GRU) ➔ Santiago do Chile (SCL) | 09/10/2026 a 13/10/2026</p>
+        
+        <div class="cards">
+            <div class="card">
+                <h3>Último Preço</h3>
+                <p id="ultimoPreco">R$ --</p>
+            </div>
+            <div class="card">
+                <h3>Menor Preço Histórico</h3>
+                <p id="menorPreco" style="color: #2e7d32;">R$ --</p>
+            </div>
+        </div>
+
+        <canvas id="graficoPrecos"></canvas>
+
+        <div style="text-align: center;">
+            <a id="linkCompra" href="#" target="_blank" class="btn">Comprar no Google Flights</a>
+        </div>
+    </div>
+
+    <script>
+        fetch('dados.json')
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.map(item => item.data_consulta);
+                const precos = data.map(item => item.preco);
+                
+                const ultimo = precos[precos.length - 1];
+                const menor = Math.min(...precos);
+                const ultimoLink = data[data.length - 1].link;
+
+                document.getElementById('ultimoPreco').innerText = `R$ ${ultimo}`;
+                document.getElementById('menorPreco').innerText = `R$ ${menor}`;
+                document.getElementById('linkCompra').href = ultimoLink;
+
+                const ctx = document.getElementById('graficoPrecos').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Preço da Passagem (R$)',
+                            data: precos,
+                            borderColor: '#1a73e8',
+                            backgroundColor: 'rgba(26, 115, 232, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: { beginAtZero: false }
+                        }
+                    }
+                });
+            })
+            .catch(err => console.error('Ainda não há dados suficientes para exibir o gráfico.', err));
+    </script>
+</body>
+</html>
